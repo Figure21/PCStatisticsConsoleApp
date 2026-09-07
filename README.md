@@ -11,3 +11,6 @@ I have a better understanding of new things such as flush, datatypes and how to 
 Some things i already knew how to do, but it was nice to learn how to properly use them in C++, such as loops and methods. 
 
 The syntax for how to use methods from different libraries is still quite strange and difficult for me. 
+
+
+![Image of program.](https://github.com/Figure21/PCStatisticsConsoleApp/blob/master/PCConsoleUI.png)
