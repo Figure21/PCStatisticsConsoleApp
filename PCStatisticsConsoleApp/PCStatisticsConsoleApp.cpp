@@ -24,15 +24,33 @@ std::string getUptime() {
     return h + "h " + m + "m " + s + "s" + " ]";
 }
 
+struct Spinner {
+    int row;
+    int col;
+    int frame = 0;
+    const char symbols[4] = { '|', '/', '-', '\\' };
+
+    void update() {
+        setCursor(row, col);
+        std::cout << symbols[frame % 4] << std::flush;
+        frame++;
+    }
+};
+
 std::string getCurrentTime() {
     char strTime[26];
     time_t now = time(NULL);
     ctime_s(strTime, sizeof strTime, &now);
 
-    return strTime;
+    std::string stringTime = strTime;
+
+    if (!stringTime.empty() && stringTime.back() == '\n') {
+        stringTime.pop_back();
+    }
+
+
+    return stringTime;
 }
-
-
 
 struct LiveField {
     int row; 
@@ -42,7 +60,7 @@ struct LiveField {
     void update(const std::string& newValue) {
         if (newValue != lastValue) {
             setCursor(row, col);
-            std::cout << newValue << "   " << std::flush;
+            std::cout << newValue << " " << std::flush;
             lastValue = newValue;
         }
     }
@@ -56,12 +74,12 @@ int main()
     std::cout << "\x1B[2J\x1B[H"; 
 
     std::cout << "+-------------------------------------------+            +-----------------------------------------------------------+\n";
-    std::cout << "|                  System                   |            |                        General Info                       |\n";
+    std::cout << "|                  System             [ ]   |            |                        General Info                       |\n";
     std::cout << "+-------------------------------------------+            +-----------------------------------------------------------+\n";
     std::cout << "| RAM Usage(%)    [                         |            | Date & Time  [                          ]                 |\n";
-    std::cout << "| Total Uptime    [           ]             |            | Date & Time  [                                            |\n";
-    std::cout << "| Example         [           ]             |            | Date & Time  [                                            |\n";
-    std::cout << "| Example         [           ]             |            | Date & Time  [                                            |\n";
+    std::cout << "| Total Uptime    [                         |            | Example      [                                            |\n";
+    std::cout << "| Example         [           ]             |            | Example      [                                            |\n";
+    std::cout << "| Example         [           ]             |            | Example      [                                            |\n";
     std::cout << "+-------------------------------------------+            +-----------------------------------------------------------+\n";
 
     //System Fields
@@ -69,6 +87,7 @@ int main()
     LiveField runTimeField = { 5, 21 };
     LiveField exampleField2 = { 6, 21 };
     LiveField exampleField3 = { 7, 21 };
+    Spinner mySpinner = { 2, 40 }; 
 
     //General Info Fields
     LiveField timeField = { 4, 75 };
@@ -77,13 +96,12 @@ int main()
 
     while (true) {
         GlobalMemoryStatusEx(&ram);
-
+        mySpinner.update();
         ramField.update(std::to_string(ram.dwMemoryLoad) + "%" + " ]");
         runTimeField.update(getUptime());
         timeField.update(getCurrentTime());
-        
 
-        std::this_thread::sleep_for(std::chrono::milliseconds(500));
+        std::this_thread::sleep_for(std::chrono::milliseconds(200));
     }
 }
 
