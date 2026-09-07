@@ -1,6 +1,3 @@
-// PCStatisticsConsoleApp.cpp : This file contains the 'main' function. Program execution begins and ends there.
-//
-
 #include <iostream>
 #include <Windows.h>
 #include <string>
@@ -8,10 +5,6 @@
 #include <thread>
 
 MEMORYSTATUSEX ram;
-
-
-
-
 
 void setCursor(int row, int col) {
     std::cout << "\x1B[" << row << ";" << col << "H";
@@ -30,6 +23,16 @@ std::string getUptime() {
 
     return h + "h " + m + "m " + s + "s" + " ]";
 }
+
+std::string getCurrentTime() {
+    char strTime[26];
+    time_t now = time(NULL);
+    ctime_s(strTime, sizeof strTime, &now);
+
+    return strTime;
+}
+
+
 
 struct LiveField {
     int row; 
@@ -52,34 +55,36 @@ int main()
     std::cout << "\x1B[?25l"; 
     std::cout << "\x1B[2J\x1B[H"; 
 
-    std::cout << "+-------------------------------------------+\n";
-    std::cout << "|                  System                   |\n";
-    std::cout << "+-------------------------------------------+\n";
-    std::cout << "| RAM Usage(%)    [                         |\n";
-    std::cout << "| Total Uptime    [           ]             |\n";
-    std::cout << "| Example         [           ]             |\n";
-    std::cout << "| Example         [           ]             |\n";
-    std::cout << "+-------------------------------------------+\n";
+    std::cout << "+-------------------------------------------+            +-----------------------------------------------------------+\n";
+    std::cout << "|                  System                   |            |                        General Info                       |\n";
+    std::cout << "+-------------------------------------------+            +-----------------------------------------------------------+\n";
+    std::cout << "| RAM Usage(%)    [                         |            | Date & Time  [                          ]                 |\n";
+    std::cout << "| Total Uptime    [           ]             |            | Date & Time  [                                            |\n";
+    std::cout << "| Example         [           ]             |            | Date & Time  [                                            |\n";
+    std::cout << "| Example         [           ]             |            | Date & Time  [                                            |\n";
+    std::cout << "+-------------------------------------------+            +-----------------------------------------------------------+\n";
 
+    //System Fields
     LiveField ramField = { 4, 21 };
     LiveField runTimeField = { 5, 21 };
     LiveField exampleField2 = { 6, 21 };
     LiveField exampleField3 = { 7, 21 };
+
+    //General Info Fields
+    LiveField timeField = { 4, 75 };
+
     ram.dwLength = sizeof(MEMORYSTATUSEX);
-    
 
     while (true) {
         GlobalMemoryStatusEx(&ram);
-        //std::string currentRamTest = ram.dwMemoryLoad << "%\n";
 
         ramField.update(std::to_string(ram.dwMemoryLoad) + "%" + " ]");
         runTimeField.update(getUptime());
+        timeField.update(getCurrentTime());
         
 
         std::this_thread::sleep_for(std::chrono::milliseconds(500));
     }
-
-
 }
 
 
