@@ -1,5 +1,5 @@
 # PCStatisticsConsoleApp
-This is my first project in C++, project started on 06/09 2026.
+This is my first project in C++, project started on 06/09 2026 and finished 07/09 2026.
 
 Just a simple sandbox to learn basic concepts in C++, i only used basic libraries nothing external.
 
